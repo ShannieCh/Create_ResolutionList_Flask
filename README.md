@@ -23,16 +23,20 @@ A Flask web application that allows users to register, log in, and create, updat
 
 ```bash
 git clone https://github.com/ShannieCh/Create_ResolutionList_Flask.git
+```
+2. **Go to the folder**
+
+```bash
 cd Create_ResolutionList_Flask
 ```
 
-2. **Create a virtual environment**
+3. **Create a virtual environment**
 
 ```bash
 python3 -m venv venv
 ```
 
-3. **Activate the virtual environment**
+4. **Activate the virtual environment**
 
 * On **macOS/Linux**:
 
@@ -52,13 +56,13 @@ source venv/bin/activate
 venv\Scripts\activate.bat
 ```
 
-4. **Install dependencies**
+5. **Install dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-5. **Run the Flask app**
+6. **Run the Flask app**
 
 ```bash
 flask run
@@ -78,5 +82,4 @@ flask run
   * Enhancing security with rate limiting and account lockout on multiple failed login attempts
   * Integrating OAuth for social login options (e.g., Google, GitHub)
 
-```
-```
+
