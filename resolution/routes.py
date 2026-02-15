@@ -1,8 +1,10 @@
 from flask import render_template, redirect, url_for, flash, request, abort
+from flask_login import login_user, current_user, logout_user, login_required
+from urllib.parse import urlparse, urljoin
 from resolution import app, db, bcrypt
 from resolution.forms import RegistrationForm, LoginForm, CreatePostFrProfileForm, PostForm
 from resolution.models import User, Post
-from flask_login import login_user, current_user, logout_user, login_required
+
 
 
 @app.route('/')
@@ -30,21 +32,35 @@ def register():
 	return render_template('register.html', form=form)
 
 
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+           ref_url.netloc == test_url.netloc
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-	if current_user.is_authenticated:
-		return redirect(url_for('home'))
-	form = LoginForm()
-	if form.validate_on_submit():
-		user = User.query.filter_by(email=form.email.data).first()
-		if user and bcrypt.check_password_hash(user.password, form.password.data):
-			login_user(user)
-			next_page = request.args.get('next')
-			flash('Logging in done!', 'success')
-			return redirect(next_page if next_page else url_for('home'))
-		else:
-			flash('Email or Password is wrong', 'danger')
-	return render_template('login.html', form=form)
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user)
+            
+            next_page = request.args.get('next')
+            
+            if not next_page or not is_safe_url(next_page):
+                next_page = url_for('home')
+            
+            flash('Logging in done!', 'success')
+            return redirect(next_page)
+        else:
+            flash('Email or Password is wrong', 'danger')
+            
+    return render_template('login.html', form=form)
+
 
 
 @app.route('/logout')
@@ -89,6 +105,26 @@ def delete(post_id):
 	flash('Post deleted', 'info')
 	return redirect(url_for('home'))
 
+@app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
+@login_required
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    
+    form = PostForm() 
+    
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+        db.session.commit()
+        flash('Your resolution has been updated!', 'success')
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.content.data = post.content
+        
+    return render_template('create_post.html', title='Update Resolution', form=form)
 
 
 
