@@ -1,16 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h3>{{ post.title }}</h3>
-    <small>{{ post.author.username | capitalize }} {{ post.date.strftime('%Y-%m-%d') }}</small>
-    <hr/>
-    <p>{{ post.content }}</p>
-
-    {% if post.author == current_user %} 
-        <p align="center">
-            <a href="{{ url_for('update_post', post_id=post.id) }}" class="btn btn-secondary">Update</a>
-            
-            <a href="{{ url_for('delete', post_id=post.id) }}" class="btn btn-danger">Delete</a>
-        </p>
+    {% if post.author == current_user  %}     
     {% endif %}
+    <h3>{{ post.title }}</h3>
+    <small>{{ post.author.username | capitalize }} {{ post.date.strftime('%Y-%m-%d') }}</small><hr/>
+    <p>{{ post.content }}</p>
+    <p align="center">
+    <a href="{{ url_for('delete', post_id=post.id) }}" class="btn btn-danger">Delete</a>
+    </p>
 {% endblock %}
