@@ -1,85 +1,62 @@
-# Create_ResolutionList_Flask
 
-A Flask web application that allows users to register, log in, and create, update, or delete their own posts.
+#  Resolution Tracker: Secure & Agent-Augmented
 
-## Features
+This is a Full-Stack Flask application built for the **GitHub Copilot CLI Challenge (Feb 2026)**. It allows users to track their 2026 goals with a focus on zero-trust security and clean architecture.
 
-- Secure user registration with password hashing (bcrypt)  
-- User login and logout functionality with session management (Flask-Login)  
-- User-specific post creation, editing, and deletion  
-- Authorization to restrict post deletion to post owners  
-- Dynamic HTML rendering with Flask and Jinja2 templates  
-- SQLite database using SQLAlchemy ORM  
+##  Agentic Development (GitHub Copilot CLI)
+
+This project was developed and audited using the **GitHub Copilot CLI (v0.0.410)** in **Agent Mode**. I utilized the CLI's advanced terminal capabilities to oversee the application's lifecycle:
+
+* **Security Audit:** Used the terminal agent to perform a `@workspace` scan, which identified a critical **Open Redirect** vulnerability in the `login` route.
+* **Agentic Planning:** Leveraged **Plan Mode** to architect a robust `is_safe_url` validation utility, ensuring all redirects remain within the local domain.
+* **CRUD Refactoring:** Directed the agent to implement secure `Update` and `Delete` routes, ensuring that unauthorized users cannot modify resolutions belonging to others.
+
+##  Testing the App
+
+To verify the secure features and log in as the test user, use these credentials:
+
+* **Email:** `hanna@gmail.com`
+* **Password:** `hanna123`
+
+##  Features
+
+* **Full CRUD:** Create, Read, Update, and Delete resolutions.
+* **Advanced Validation:** Protection against Open Redirect attacks using `urllib.parse`.
+* **Secure Auth:** Password hashing via `Flask-Bcrypt` and session management via `Flask-Login`.
+* **Database:** SQLite with SQLAlchemy ORM.
 
 ## Getting Started
 
-### Prerequisites
-
-- Python 3.x installed
-
-### Installation and Setup
-
-1. **Clone the repository**
+### 1. Installation
 
 ```bash
 git clone https://github.com/ShannieCh/Create_ResolutionList_Flask.git
-```
-2. **Go to the folder**
-
-```bash
 cd Create_ResolutionList_Flask
+python -m venv venv
+
 ```
 
-3. **Create a virtual environment**
-
-```bash
-python3 -m venv venv
-```
-
-4. **Activate the virtual environment**
-
-* On **macOS/Linux**:
-
-```bash
-source venv/bin/activate
-```
-
-* On **Windows (PowerShell)**:
+### 2. Setup (Windows PowerShell)
 
 ```powershell
 .\venv\Scripts\Activate.ps1
-```
-
-* On **Windows (Command Prompt)**:
-
-```cmd
-venv\Scripts\activate.bat
-```
-
-5. **Install dependencies**
-
-```bash
 pip install -r requirements.txt
+
 ```
 
-6. **Run the Flask app**
+### 3. Run
 
-```bash
+```powershell
 flask run
+
 ```
 
-6. Open your browser at [http://localhost:5000](http://localhost:5000)
+Access the app at: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
-## Security Considerations & Future Improvements
+## 🛡️ Security Remediation
 
-* Passwords are securely hashed using bcrypt to protect user credentials.
-* Currently, email verification and password reset features are not implemented.
-* Input validation is in place, but additional measures can be added to prevent injection attacks.
-* Future plans include:
+A major vulnerability was identified where the `?next=` parameter could be manipulated to redirect users to external malicious sites.
 
-  * Adding email confirmation during registration
-  * Implementing password reset functionality
-  * Enhancing security with rate limiting and account lockout on multiple failed login attempts
-  * Integrating OAuth for social login options (e.g., Google, GitHub)
+**The Fix:** We implemented a `netloc` validation check that compares the redirect target against the host URL. This "Zero-Trust" pattern ensures users stay within the secure application environment.
 
-
+---

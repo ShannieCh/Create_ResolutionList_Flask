@@ -1,2 +1,12 @@
+# Python
 __pycache__/
+*.pyc
 .idea/
+
+# Environments
+venv/
+env/
+
+# Database
+flask.db
+instance/
